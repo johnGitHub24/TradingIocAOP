@@ -1,0 +1,3 @@
+rootProject.name = 'TradingIocAOP'
+
+include 'common', 'mini-ioc', 'trading-app'

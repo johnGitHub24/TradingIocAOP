@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradingIocAOP — AOP 切面觀測台</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body { background: #f5f6fa; }
+        .aspect-card { border-left: 4px solid #0d6efd; }
+        .log-box { max-height: 220px; overflow-y: auto; font-family: monospace; font-size: 0.8rem; background: #1e1e1e; color: #d4d4d4; border-radius: .375rem; padding: .5rem; }
+        .metric { font-size: 1.6rem; font-weight: 700; }
+        .aspect-title { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: #6c757d; }
+    </style>
+</head>
+<body>
+<div id="app" class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0"><i class="bi bi-diagram-3"></i> TradingIocAOP — AOP 六大切面觀測台</h3>
+        <div>
+            <a class="btn btn-sm btn-outline-secondary" href="/swagger-ui.html" target="_blank"><i class="bi bi-file-earmark-code"></i> Swagger</a>
+            <a class="btn btn-sm btn-outline-secondary" href="/h2-console" target="_blank"><i class="bi bi-database"></i> H2</a>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <!-- 左：操作區 -->
+        <div class="col-lg-4">
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white"><i class="bi bi-cart-plus"></i> 下單</div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <label class="form-label">Symbol</label>
+                        <input v-model="order.symbol" class="form-control form-control-sm">
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label">Side</label>
+                            <select v-model="order.side" class="form-select form-select-sm">
+                                <option>BUY</option>
+                                <option>SELL</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Quantity</label>
+                            <input v-model.number="order.quantity" type="number" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="mb-2 mt-2">
+                        <label class="form-label">Price</label>
+                        <input v-model.number="order.price" type="number" step="0.01" class="form-control form-control-sm">
+                    </div>
+                    <button class="btn btn-primary btn-sm w-100" @click="placeOrder">
+                        <i class="bi bi-send"></i> 送出下單
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm w-100 mt-2" @click="triggerRisk">
+                        <i class="bi bi-shield-exclamation"></i> 觸發風控拒絕（qty=5000）
+                    </button>
+                    <div v-if="lastMessage" class="alert mt-2 py-2 mb-0" :class="lastOk ? 'alert-success' : 'alert-warning'">
+                        {{ lastMessage }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-info text-white"><i class="bi bi-tags"></i> 報價（示範快取切面）</div>
+                <div class="card-body">
+                    <div class="input-group input-group-sm mb-2">
+                        <input v-model="quoteSymbol" class="form-control">
+                        <button class="btn btn-info text-white" @click="getQuote">查詢</button>
+                    </div>
+                    <small class="text-muted">連查兩次同一 symbol，觀察下方 cacheHits 增加。</small>
+                    <div v-if="quote" class="mt-2 small">
+                        <strong>{{ quote.symbol }}</strong> bid={{ quote.bid }} / ask={{ quote.ask }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右：切面報表 -->
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0"><i class="bi bi-activity"></i> 切面觀測報表</h5>
+                <button class="btn btn-sm btn-outline-primary" @click="loadReport"><i class="bi bi-arrow-clockwise"></i> 重新整理</button>
+            </div>
+
+            <div class="row g-2 mb-3">
+                <div class="col-md-3 col-6">
+                    <div class="card aspect-card text-center py-2">
+                        <div class="aspect-title">Cache Hits</div>
+                        <div class="metric text-success">{{ report.cacheHits }}</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card aspect-card text-center py-2">
+                        <div class="aspect-title">Cache Misses</div>
+                        <div class="metric text-secondary">{{ report.cacheMisses }}</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card aspect-card text-center py-2">
+                        <div class="aspect-title">Audits</div>
+                        <div class="metric text-primary">{{ report.audits.length }}</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card aspect-card text-center py-2">
+                        <div class="aspect-title">Exceptions</div>
+                        <div class="metric text-danger">{{ report.exceptions.length }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header py-1"><small><i class="bi bi-journal-text"></i> ① Logging 日誌</small></div>
+                        <div class="card-body p-2">
+                            <div class="log-box">
+                                <div v-for="(l, i) in report.logs" :key="i">{{ l }}</div>
+                                <div v-if="!report.logs.length" class="text-muted">（尚無資料）</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header py-1"><small><i class="bi bi-stopwatch"></i> ② Performance 耗時 (ms)</small></div>
+                        <div class="card-body p-2">
+                            <table class="table table-sm mb-0">
+                                <tr v-for="(v, k) in report.timings" :key="k"><td class="small">{{ k }}</td><td class="text-end">{{ v }}</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-header py-1"><small><i class="bi bi-exclamation-triangle"></i> ③ Exception</small></div>
+                        <div class="card-body p-2 small">
+                            <div v-for="(e, i) in report.exceptions" :key="i" class="text-danger">{{ e }}</div>
+                            <div v-if="!report.exceptions.length" class="text-muted">（無）</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-header py-1"><small><i class="bi bi-arrow-repeat"></i> ④ Retry 嘗試次數</small></div>
+                        <div class="card-body p-2 small">
+                            <div v-for="(v, k) in report.retryAttempts" :key="k">{{ k }} → <strong>{{ v }}</strong></div>
+                            <div v-if="!Object.keys(report.retryAttempts).length" class="text-muted">（無）</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-header py-1"><small><i class="bi bi-clipboard-check"></i> ⑥ Audit 稽核</small></div>
+                        <div class="card-body p-2 small">
+                            <div v-for="(a, i) in report.audits" :key="i">{{ a }}</div>
+                            <div v-if="!report.audits.length" class="text-muted">（無）</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header py-1"><small><i class="bi bi-list-ul"></i> 訂單列表</small></div>
+                <div class="card-body p-2">
+                    <table class="table table-sm table-striped mb-0">
+                        <thead><tr><th>orderId</th><th>symbol</th><th>side</th><th>qty</th><th>price</th><th>status</th></tr></thead>
+                        <tbody>
+                        <tr v-for="o in orders" :key="o.orderId">
+                            <td class="small">{{ o.orderId }}</td><td>{{ o.symbol }}</td><td>{{ o.side }}</td>
+                            <td>{{ o.quantity }}</td><td>{{ o.executedPrice }}</td>
+                            <td><span class="badge bg-success">{{ o.status }}</span></td>
+                        </tr>
+                        <tr v-if="!orders.length"><td colspan="6" class="text-muted text-center">（尚無訂單）</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+flowchart LR
+  L[Logging 10] --> P[Performance 20]
+  P --> E[Exception 30]
+  E --> R[Retry 40]
+  R --> C[Cache 50]
+  C --> A[Audit 60]
+  A --> M[Method body]

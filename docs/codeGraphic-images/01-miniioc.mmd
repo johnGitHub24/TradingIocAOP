@@ -1,0 +1,6 @@
+flowchart TB
+  APP[MiniApplicationContext]
+  APP --> BEAN[Bean definitions]
+  BEAN --> PROXY[JDK Dynamic Proxy]
+  PROXY --> ADV[Advice interceptors]
+  ADV --> TARGET[Target method]

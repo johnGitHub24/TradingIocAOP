@@ -1,0 +1,11 @@
+sequenceDiagram
+  participant C as Client
+  participant OC as OrderController
+  participant AOP as AOP chain
+  participant OS as OrderService
+  participant DB as H2
+  C->>OC: POST orders
+  OC->>AOP: intercept
+  AOP->>OS: placeOrder
+  OS->>DB: save FILLED
+  OS-->>C: 201

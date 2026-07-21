@@ -1,0 +1,14 @@
+flowchart TB
+  subgraph com [common POJO]
+    OR[OrderRequest]
+  end
+  subgraph mini [mini-ioc]
+    CTX[MiniApplicationContext]
+  end
+  subgraph app [trading-app :8080]
+    API[api controllers]
+    ASP[aspect package]
+    SVC[application services]
+  end
+  com --> mini
+  com --> app
