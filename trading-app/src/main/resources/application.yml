@@ -27,6 +27,21 @@ management:
       exposure:
         include: health,info
 
+# IntelliJ／bootRun 啟動後 Console 印常用 URL（見 StartupInfoLogger）
+startup:
+  info:
+    enabled: true
+    project-name: TradingIocAOP
+    frontend: static          # none | static | vite（本專案同埠靜態 Demo）
+    auth: false
+    h2: true
+    api-docs: true
+    home-path: /
+    extra-paths:
+      - /api/v1/orders
+      - /api/v1/pricing/AAPL
+      - /api/v1/aspects/report
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
