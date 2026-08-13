@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TradingIocAOP — 開發專案規格書</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg:#0f1419; --surface:#1a2332; --surface2:#243044; --border:#2d3a4f;
+      --text:#e6edf3; --muted:#8b9cb3; --accent:#3b82f6; --accent2:#10b981; --warn:#f59e0b;
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0; font-family:"Segoe UI","Microsoft JhengHei",sans-serif;
+      background:var(--bg); color:var(--text); line-height:1.65;
+    }
+    .bar {
+      position:sticky; top:0; z-index:10;
+      display:flex; flex-wrap:wrap; align-items:center; gap:0.75rem;
+      padding:0.75rem 1.25rem; background:var(--surface);
+      border-bottom:1px solid var(--border);
+    }
+    .bar a { color:var(--accent); text-decoration:none; }
+    .bar .src { color:var(--muted); font-size:0.85rem; }
+    .bar .badge {
+      font-size:0.75rem; color:var(--warn); border:1px solid var(--warn);
+      border-radius:4px; padding:0.1rem 0.45rem;
+    }
+    main { max-width:880px; margin:0 auto; padding:1.5rem 1.25rem 3rem; }
+    h1,h2,h3,h4 { line-height:1.3; }
+    h1 { font-size:1.7rem; border-bottom:2px solid var(--accent); padding-bottom:0.4rem; }
+    h2 { font-size:1.3rem; margin-top:1.75rem; border-bottom:1px solid var(--border); padding-bottom:0.3rem; }
+    h3 { font-size:1.1rem; margin-top:1.25rem; color:var(--accent2); }
+    a { color:var(--accent); }
+    code, pre { font-family:Consolas,"Courier New",monospace; }
+    code { background:var(--surface2); padding:0.1rem 0.35rem; border-radius:4px; font-size:0.9em; }
+    pre { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1rem; overflow-x:auto; }
+    pre code { background:transparent; padding:0; }
+    table { border-collapse:collapse; width:100%; margin:1rem 0; font-size:0.92rem; }
+    th, td { border:1px solid var(--border); padding:0.45rem 0.65rem; text-align:left; }
+    th { background:var(--surface2); }
+    blockquote {
+      margin:1rem 0; padding:0.5rem 0.9rem; border-left:3px solid var(--warn);
+      background:var(--surface2); color:var(--muted);
+    }
+    .mermaid { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1rem; overflow-x:auto; }
+    hr { border:none; border-top:1px solid var(--border); margin:1.5rem 0; }
+    footer { max-width:880px; margin:0 auto; padding:0 1.25rem 2rem; color:var(--muted); font-size:0.8rem; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <a href="docs/codeGraphic.html">← CodeGraphic</a>
+    <span class="badge">companion HTML</span>
+    <span class="src">來源（權威）：開發專案規格書.md</span>
+  </div>
+  <main>
+<h1>TradingIocAOP — 開發專案規格書</h1>
+<blockquote>
+<p><strong>本文件為 TradingIocAOP 的唯一主規格書（開發權威）。</strong>
+主題：以「交易下單／風控」情境示範 <strong>依賴注入（DI）、控制反轉（IoC）、AOP、模組化架構</strong>。
+技術棧：Java 21 · Spring Boot 3.2.2 · Gradle 多模組 · H2/JPA · Spring AOP · JUnit 5 · Mockito · AssertJ。
+開發、測試、面試準備均以本文件為準。</p>
+</blockquote>
+<hr />
+<h2>第 0 章　專案定位與文件體系</h2>
+<h3>0.1 專案定位</h3>
+<table>
+<thead>
+<tr>
+  <th>項目</th>
+  <th>內容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>名稱</td>
+  <td>TradingIocAOP</td>
+</tr>
+<tr>
+  <td>目的</td>
+  <td>用最小可運作的交易情境，把「DI／IoC／AOP／模組化」四個概念徹底攤開示範</td>
+</tr>
+<tr>
+  <td>定位</td>
+  <td>Trading 入門系列的「框架原理」補充專案</td>
+</tr>
+<tr>
+  <td>學習目的</td>
+  <td>同時看懂「手刻的 IoC/AOP 原理」與「Spring 工業級實作」，理解輪子怎麼造、以及框架幫你做了什麼</td>
+</tr>
+<tr>
+  <td>產出</td>
+  <td>一個 3 模組 Gradle 專案 + 完整單元／整合測試 + 文件體系</td>
+</tr>
+</tbody>
+</table>
+<h3>0.2 混合式教學設計（本專案特色）</h3>
+<p>本專案刻意採「<strong>先手刻、再對照</strong>」的雙軌設計：</p>
+<table>
+<thead>
+<tr>
+  <th>軌道</th>
+  <th>模組</th>
+  <th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>手刻原理</td>
+  <td><code>mini-ioc</code></td>
+  <td>自己實作約 150 行的迷你 IoC 容器 + JDK 動態代理 AOP，示範「輪子怎麼造」</td>
+</tr>
+<tr>
+  <td>工業實作</td>
+  <td><code>trading-app</code></td>
+  <td>同樣的交易情境改用 Spring 原生 IoC/DI + Spring AOP（六大切面），示範實務怎麼用</td>
+</tr>
+</tbody>
+</table>
+<h3>0.3 文件體系</h3>
+<table>
+<thead>
+<tr>
+  <th>#</th>
+  <th>文件</th>
+  <th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td><code>開發專案規格書.md</code>（本文件）</td>
+  <td>主規格（權威）</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>API規格書.md</code></td>
+  <td>REST API 契約</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>docs/功能流程說明.md</code></td>
+  <td>每個功能怎麼跑（含程式對照與流程圖）</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>docs/初學者學習說明書.md</code></td>
+  <td>Day 1~2 入門節奏</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>docs/架構學習導引.md</code></td>
+  <td>概念對照表 + 面試一句話</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>docs/測試與CI.md</code></td>
+  <td>Case ID 主表 + fixture + CI + 擴充 SOP</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>README.md</code></td>
+  <td>快速啟動入口</td>
+</tr>
+</tbody>
+</table>
+<h3>0.4 外部參考（採用／不採用）</h3>
+<table>
+<thead>
+<tr>
+  <th>來源</th>
+  <th>採用範圍</th>
+  <th>不採用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>TransactionClosedStateMachine</td>
+  <td>文件模板、測試 <code>@Tag</code> 分流、Case ID 命名、fixture 機制</td>
+  <td>狀態機業務</td>
+</tr>
+<tr>
+  <td>APIGatewayMQ</td>
+  <td>Gradle 多模組結構、單元/整合測試分流、fixture 目錄慣例</td>
+  <td>Kafka／WebFlux／限流</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>第 1 章　系統範圍</h2>
+<h3>1.1 核心功能</h3>
+<ul>
+<li>交易下單（風控 → 報價 → 落庫 → 通知）。</li>
+<li>報價查詢（示範 AOP 快取）。</li>
+<li>切面觀測報表（把六大切面的效果攤開）。</li>
+<li>手刻 IoC 容器 + 手刻 AOP 的獨立示範（<code>mini-ioc</code>）。</li>
+</ul>
+<h3>1.2 不在範圍</h3>
+<ul>
+<li>真實撮合、行情連線、下單回報。</li>
+<li>分散式、訊息佇列、快取中介軟體（Redis）。</li>
+<li>使用者認證授權。</li>
+</ul>
+<h3>1.3 技術棧</h3>
+<table>
+<thead>
+<tr>
+  <th>層</th>
+  <th>技術</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>語言</td>
+  <td>Java 21</td>
+</tr>
+<tr>
+  <td>框架</td>
+  <td>Spring Boot 3.2.2</td>
+</tr>
+<tr>
+  <td>建置</td>
+  <td>Gradle 多模組（wrapper 8.5）</td>
+</tr>
+<tr>
+  <td>持久化</td>
+  <td>Spring Data JPA + H2（in-memory, <code>MODE=PostgreSQL</code>）</td>
+</tr>
+<tr>
+  <td>AOP</td>
+  <td>spring-boot-starter-aop（AspectJ 註解 + Spring 代理）</td>
+</tr>
+<tr>
+  <td>驗證</td>
+  <td>spring-boot-starter-validation</td>
+</tr>
+<tr>
+  <td>API 文件</td>
+  <td>springdoc-openapi 2.3.0（Swagger UI）</td>
+</tr>
+<tr>
+  <td>測試</td>
+  <td>JUnit 5 + Mockito + AssertJ</td>
+</tr>
+</tbody>
+</table>
+<h3>1.4 啟動方式</h3>
+<pre><code class="language-powershell">. .\scripts\env.ps1          # 設定 JAVA_HOME 為 JDK 21
+.\gradlew.bat :trading-app:bootRun
+# 或執行 mini-ioc 示範：
+.\gradlew.bat :mini-ioc:run
+</code></pre>
+<hr />
+<h2>第 2 章　模組化架構</h2>
+<h3>2.1 模組結構</h3>
+<pre><code class="language-text">TradingIocAOP/  (Gradle 多模組)
+├── common/          純 POJO：DTO / enum / 領域模型（零框架相依）
+│   └── com.trading.common: OrderRequest, OrderResult, Quote, Side, OrderStatus
+├── mini-ioc/        手刻 IoC 容器 + 手刻 AOP（相依 common）
+│   ├── annotation:  @Component, @Inject
+│   ├── container:   MiniApplicationContext, ClasspathScanner, BeanException
+│   ├── aop:         MethodInterceptor, Invocation, InterceptorChain,
+│   │                ProxyFactory, LoggingInterceptor, TimingInterceptor
+│   └── demo:        OrderPlacer/RiskChecker/PricingGateway (+impl) + MiniIocDemo
+└── trading-app/     Spring Boot 應用（相依 common）
+    ├── api:         OrderController, PricingController, AspectReportController
+    ├── application: OrderService, RiskService, PricingService, NotificationService
+    ├── aspect:      六大切面 + AspectRecorder + annotation(@Cacheable,@Retryable)
+    ├── infrastructure: OrderEntity, OrderRepository
+    ├── dto:         PlaceOrderRequest, ErrorResponse
+    └── config:      GlobalExceptionHandler, OpenApiConfig
+</code></pre>
+<h3>2.2 模組相依方向</h3>
+<pre><code class="language-text">common  ←────  mini-ioc
+   ↑
+   └────────  trading-app
+</code></pre>
+<p><code>common</code> 不相依任何人；<code>mini-ioc</code> 與 <code>trading-app</code> 各自相依 <code>common</code>，彼此不相依。這正是「模組邊界」的實踐：共用契約下沉到 <code>common</code>，實作各自獨立。</p>
+<h3>2.3 層職責</h3>
+<table>
+<thead>
+<tr>
+  <th>層</th>
+  <th>職責</th>
+  <th>禁止</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>api（Controller）</td>
+  <td>收發 HTTP、參數驗證</td>
+  <td>寫商業邏輯</td>
+</tr>
+<tr>
+  <td>application（Service）</td>
+  <td>商業邏輯、編排</td>
+  <td>碰 HTTP、算 SQL 字串</td>
+</tr>
+<tr>
+  <td>aspect</td>
+  <td>橫切關注點（記錄/計時/稽核/例外/快取/重試）</td>
+  <td>混入業務規則</td>
+</tr>
+<tr>
+  <td>infrastructure</td>
+  <td>JPA 存取</td>
+  <td>資料轉換、商業邏輯</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>第 3 章　控制反轉與依賴注入</h2>
+<h3>3.1 手刻容器（mini-ioc）核心流程</h3>
+<ol>
+<li><strong>註冊</strong>：<code>register(Class...)</code> 或 <code>scan(basePackage)</code> 收集 <code>@Component</code>。</li>
+<li><strong>解析</strong>：<code>getBean(type)</code> 遞迴解析建構子參數——相依由容器決定從哪來（控制反轉）。</li>
+<li><strong>單例</strong>：每型別建立一次並快取。</li>
+<li><strong>AOP</strong>：若登記攔截器且元件有實作介面，回傳 JDK 動態代理。</li>
+</ol>
+<h3>3.2 手刻 vs Spring 對照</h3>
+<table>
+<thead>
+<tr>
+  <th>概念</th>
+  <th>mini-ioc（手刻）</th>
+  <th>trading-app（Spring）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>元件標記</td>
+  <td><code>@Component</code>（自訂）</td>
+  <td><code>@Component</code>/<code>@Service</code></td>
+</tr>
+<tr>
+  <td>建構子注入</td>
+  <td>反射挑選建構子 + 遞迴解析</td>
+  <td>自動</td>
+</tr>
+<tr>
+  <td>容器</td>
+  <td><code>MiniApplicationContext</code></td>
+  <td><code>ApplicationContext</code></td>
+</tr>
+<tr>
+  <td>取得 bean</td>
+  <td><code>getBean(Class)</code></td>
+  <td><code>@Autowired</code> / 建構子</td>
+</tr>
+<tr>
+  <td>掃描</td>
+  <td><code>ClasspathScanner</code></td>
+  <td><code>@ComponentScan</code></td>
+</tr>
+<tr>
+  <td>工廠式註冊</td>
+  <td>（未實作）</td>
+  <td><code>@Configuration</code> + <code>@Bean</code>（見 <code>OpenApiConfig</code>）</td>
+</tr>
+</tbody>
+</table>
+<h3>3.3 為什麼用建構子注入</h3>
+<ul>
+<li>相依「必填」且不可變（<code>final</code>），物件建立後即完整。</li>
+<li>易於測試（<code>new OrderService(mockA, mockB, ...)</code>）。</li>
+<li>可在編譯期發現缺漏，避免欄位注入的隱藏依賴。</li>
+</ul>
+<hr />
+<h2>第 4 章　AOP 六大切面（trading-app）</h2>
+<table>
+<thead>
+<tr>
+  <th>#</th>
+  <th>切面</th>
+  <th>通知類型</th>
+  <th>切點</th>
+  <th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td><code>LoggingAspect</code></td>
+  <td><code>@Around</code></td>
+  <td><code>execution(* ..application.*Service.*(..))</code></td>
+  <td>記錄方法進出與參數</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>PerformanceAspect</code></td>
+  <td><code>@Around</code></td>
+  <td>同上</td>
+  <td>計時，超過門檻告警</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>ExceptionAspect</code></td>
+  <td><code>@AfterThrowing</code></td>
+  <td>同上</td>
+  <td>統一例外攔截與告警</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>RetryAspect</code></td>
+  <td><code>@Around</code></td>
+  <td><code>@annotation(Retryable)</code></td>
+  <td>失敗自動重試</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>CacheAspect</code></td>
+  <td><code>@Around</code></td>
+  <td><code>@annotation(Cacheable)</code></td>
+  <td>方法結果快取</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>AuditAspect</code></td>
+  <td><code>@AfterReturning</code></td>
+  <td><code>OrderService.placeOrder(..)</code></td>
+  <td>成交稽核軌跡</td>
+</tr>
+</tbody>
+</table>
+<h3>4.1 切面執行順序（@Order）</h3>
+<pre><code class="language-text">Logging(10) → Performance(20) → Exception(30) → Retry(40) → Cache(50) → 方法本體
+（AuditAspect 為 @AfterReturning，於方法成功回傳後觸發）
+</code></pre>
+<p>數字越小越外層。重試包在快取外、方法本體最內，符合「重試整個含快取的呼叫、快取貼近方法」的語意。</p>
+<h3>4.2 觀測機制</h3>
+<p>六大切面都把觀測結果寫入單例 <code>AspectRecorder</code>（由 IoC 容器注入共用），可透過 <code>GET /api/v1/aspects/report</code> 觀察，整合測試亦以它斷言切面確實生效。</p>
+<hr />
+<h2>第 5 章　資料庫規格</h2>
+<h3>5.1 資料表 <code>orders</code></h3>
+<table>
+<thead>
+<tr>
+  <th>欄位</th>
+  <th>型別</th>
+  <th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>order_id</td>
+  <td>VARCHAR(40) PK</td>
+  <td>系統訂單編號</td>
+</tr>
+<tr>
+  <td>client_order_id</td>
+  <td>VARCHAR(64)</td>
+  <td>客戶端冪等鍵</td>
+</tr>
+<tr>
+  <td>symbol</td>
+  <td>VARCHAR(20)</td>
+  <td>商品代碼</td>
+</tr>
+<tr>
+  <td>side</td>
+  <td>VARCHAR(8)</td>
+  <td>BUY/SELL</td>
+</tr>
+<tr>
+  <td>quantity</td>
+  <td>INT</td>
+  <td>數量</td>
+</tr>
+<tr>
+  <td>executed_price</td>
+  <td>DECIMAL(18,4)</td>
+  <td>成交價（報價中間價）</td>
+</tr>
+<tr>
+  <td>status</td>
+  <td>VARCHAR(12)</td>
+  <td>ACCEPTED/FILLED/REJECTED</td>
+</tr>
+<tr>
+  <td>created_at</td>
+  <td>TIMESTAMP</td>
+  <td>建立時間</td>
+</tr>
+</tbody>
+</table>
+<p>對應整合測試：<code>TradingIntegrationTest.ORDER_INT_001</code>（落庫）、<code>RISK_INT_001</code>（不落庫）。</p>
+<hr />
+<h2>第 6 章　測試規格</h2>
+<h3>6.1 測試分層</h3>
+<table>
+<thead>
+<tr>
+  <th>層級</th>
+  <th>Tag</th>
+  <th>Gradle 任務</th>
+  <th>需 DB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>單元測試</td>
+  <td><code>@Tag(&quot;unit&quot;)</code></td>
+  <td><code>:module:test</code></td>
+  <td>否</td>
+</tr>
+<tr>
+  <td>整合測試</td>
+  <td><code>@Tag(&quot;integration&quot;)</code></td>
+  <td><code>:module:integrationTest</code></td>
+  <td>H2</td>
+</tr>
+<tr>
+  <td>全部</td>
+  <td>—</td>
+  <td><code>gradlew checkAll</code></td>
+  <td>是</td>
+</tr>
+</tbody>
+</table>
+<h3>6.2 Case ID 對照表</h3>
+<table>
+<thead>
+<tr>
+  <th>Case ID</th>
+  <th>模組</th>
+  <th>類型</th>
+  <th>測試重點</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>IOC_001</td>
+  <td>mini-ioc</td>
+  <td>unit</td>
+  <td>建構子注入解析相依圖</td>
+</tr>
+<tr>
+  <td>IOC_002</td>
+  <td>mini-ioc</td>
+  <td>unit</td>
+  <td>單例：兩次取得同一實例</td>
+</tr>
+<tr>
+  <td>IOC_003</td>
+  <td>mini-ioc</td>
+  <td>unit</td>
+  <td>未知型別拋 BeanException</td>
+</tr>
+<tr>
+  <td>IOC_004</td>
+  <td>mini-ioc</td>
+  <td>unit</td>
+  <td>掃描套件找到 @Component</td>
+</tr>
+<tr>
+  <td>AOP_001</td>
+  <td>mini-ioc</td>
+  <td>unit</td>
+  <td>LoggingInterceptor 記錄進出</td>
+</tr>
+<tr>
+  <td>AOP_002</td>
+  <td>mini-ioc</td>
+  <td>unit</td>
+  <td>TimingInterceptor 記錄耗時</td>
+</tr>
+<tr>
+  <td>AOP_003</td>
+  <td>mini-ioc</td>
+  <td>unit</td>
+  <td>攔截器鏈洋蔥式順序</td>
+</tr>
+<tr>
+  <td>IOC_INT_001</td>
+  <td>mini-ioc</td>
+  <td>integration</td>
+  <td>掃描+注入+代理+下單全流程</td>
+</tr>
+<tr>
+  <td>RISK_001</td>
+  <td>trading-app</td>
+  <td>unit</td>
+  <td>風控通過</td>
+</tr>
+<tr>
+  <td>RISK_002</td>
+  <td>trading-app</td>
+  <td>unit</td>
+  <td>數量超限拋 R002</td>
+</tr>
+<tr>
+  <td>RISK_003</td>
+  <td>trading-app</td>
+  <td>unit</td>
+  <td>名目金額超限拋 R003</td>
+</tr>
+<tr>
+  <td>ORDER_001</td>
+  <td>trading-app</td>
+  <td>unit</td>
+  <td>下單成功回傳 FILLED</td>
+</tr>
+<tr>
+  <td>ORDER_002</td>
+  <td>trading-app</td>
+  <td>unit</td>
+  <td>風控拒絕傳播、不落庫</td>
+</tr>
+<tr>
+  <td>ORDER_003</td>
+  <td>trading-app</td>
+  <td>unit</td>
+  <td>通知失敗不影響成交</td>
+</tr>
+<tr>
+  <td>ORDER_API_001</td>
+  <td>trading-app</td>
+  <td>unit</td>
+  <td>POST 下單回 201</td>
+</tr>
+<tr>
+  <td>ORDER_API_002</td>
+  <td>trading-app</td>
+  <td>unit</td>
+  <td>驗證失敗回 400</td>
+</tr>
+<tr>
+  <td>ORDER_INT_001</td>
+  <td>trading-app</td>
+  <td>integration</td>
+  <td>下單成功 + Logging/Timing/Audit 生效</td>
+</tr>
+<tr>
+  <td>RISK_INT_001</td>
+  <td>trading-app</td>
+  <td>integration</td>
+  <td>超限回 422 + Exception 切面記錄</td>
+</tr>
+<tr>
+  <td>VALIDATION_INT_001</td>
+  <td>trading-app</td>
+  <td>integration</td>
+  <td>缺欄位回 400</td>
+</tr>
+<tr>
+  <td>CACHE_INT_001</td>
+  <td>trading-app</td>
+  <td>integration</td>
+  <td>重複報價命中 Cache 切面</td>
+</tr>
+<tr>
+  <td>RETRY_INT_001</td>
+  <td>trading-app</td>
+  <td>integration</td>
+  <td>通知重試後成交仍成功</td>
+</tr>
+</tbody>
+</table>
+<h3>6.3 Fixture</h3>
+<ul>
+<li>存放：<code>docs/test-data/placeOrder/*.json</code></li>
+<li>載入：<code>com.trading.app.support.TradingTestFixtures.loadPlaceOrder(caseId)</code></li>
+<li>相對路徑以 rootProject 為基準（test 任務設定 <code>workingDir = rootProject.projectDir</code>）。</li>
+</ul>
+<hr />
+<h2>第 7 章　驗收標準（DoD）</h2>
+<pre><code class="language-text">□ gradlew checkAll 全綠（common / mini-ioc / trading-app）
+□ mini-ioc：手刻容器可建構子注入、單例、掃描、AOP 代理
+□ trading-app：POST /api/v1/orders 成功回 201 且落庫
+□ 風控超限回 422 並帶 ruleCode
+□ 六大切面皆可於 /api/v1/aspects/report 觀察到效果
+□ 報價重複查詢命中快取（computeCount 只 +1）
+□ 通知失敗經 RetryAspect 重試後成交仍成功
+□ Swagger UI 可測試所有端點
+□ 21 個 Case ID 全數對應到實際測試方法
+</code></pre>
+<hr />
+<h2>附錄 A　與姊妹專案概念對照</h2>
+<table>
+<thead>
+<tr>
+  <th>概念</th>
+  <th>本專案</th>
+  <th>TransactionClosedStateMachine</th>
+  <th>APIGatewayMQ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>主題</td>
+  <td>DI/IoC/AOP/模組化</td>
+  <td>狀態機</td>
+  <td>高併發削峰</td>
+</tr>
+<tr>
+  <td>架構</td>
+  <td>3 模組</td>
+  <td>單模組分層</td>
+  <td>3 模組</td>
+</tr>
+<tr>
+  <td>測試分流</td>
+  <td><code>@Tag</code></td>
+  <td><code>@Tag</code></td>
+  <td><code>@Tag</code></td>
+</tr>
+<tr>
+  <td>Case ID</td>
+  <td>✅</td>
+  <td>✅</td>
+  <td>✅</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>最後更新：2026-07-07 | 技術棧：Java 21 · Spring Boot 3.2.2 · Gradle 多模組 · Spring AOP · JUnit 5</em></p>
+
+  </main>
+  <footer>由 eos-minimal/hooks/md-to-companion-html 產生 · 請改 .md 後重跑腳本 · 勿當權威契約</footer>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: "dark", securityLevel: "loose" });
+  </script>
+</body>
+</html>
