@@ -15,6 +15,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -50,9 +52,9 @@ class OrderServiceTest {
     }
 
     /**
-     * CASE ORDER_001：合法下單回 FILLED 並呼叫風控／落庫／通知。
-     * Given: 報價 stub、save 回傳實體；When: placeOrder；Then: FILLED、中間價、三協作者被呼叫。
-     * 【技巧驗證】編排順序與依賴委派。
+     * CASE ORDER-001：合法下單回 FILLED 並呼叫風控／落庫／通知。
+     * Given: 報價 stub、save 回傳實體（對齊 fixture ORDER-001-SUCCESS）；When: placeOrder；Then: FILLED、中間價、三協作者被呼叫。
+     * 【技巧驗證】編排順序與依賴委派。與整合 ORDER-001 同一 Acceptance。
      */
     @Test
     void ORDER_001_success_returnsFilled() {
@@ -70,9 +72,9 @@ class OrderServiceTest {
     }
 
     /**
-     * CASE ORDER_002：風控拒絕向上拋且不落庫。
-     * Given: check 拋 RiskRejectedException；When: placeOrder；Then: 同例外，save never。
-     * 【技巧驗證】失敗短路，不繼續編排。
+     * CASE ORDER-002：風控拒絕向上拋且不落庫。
+     * Given: check 拋 RiskRejectedException（對齊 fixture ORDER-002-RISK_QTY／R002）；When: placeOrder；Then: 同例外，save never。
+     * 【技巧驗證】失敗短路，不繼續編排。與整合 ORDER-002 同一 Acceptance。
      */
     @Test
     void ORDER_002_riskRejected_propagatesAndSkipsPersistence() {
@@ -85,12 +87,12 @@ class OrderServiceTest {
     }
 
     /**
-     * CASE ORDER_003：通知失敗仍回 FILLED，message 含通知提示。
+     * CASE NOTIFY_001：通知失敗仍回 FILLED，message 含通知提示。
      * Given: notifyFilled 拋 NotificationException；When: placeOrder；Then: FILLED 且 message 含「通知」。
-     * 【技巧驗證】通知與成交解耦（業務仍成功）。
+     * 【技巧驗證】通知與成交解耦（業務仍成功）。缺欄驗證見 PlaceOrderRequestValidationTest。
      */
     @Test
-    void ORDER_003_notificationFails_orderStillFilled() {
+    void NOTIFY_001_notificationFails_orderStillFilled() {
         when(pricingService.getQuote("AAPL")).thenReturn(new Quote("AAPL",
                 BigDecimal.valueOf(100), BigDecimal.valueOf(101)));
         when(orderRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
@@ -100,5 +102,27 @@ class OrderServiceTest {
 
         assertThat(result.getStatus()).isEqualTo(OrderStatus.FILLED);
         assertThat(result.getMessage()).contains("通知");
+    }
+
+    /**
+     * CASE ORDER_004：查無此單回 null。
+     * Given: findById empty；When: getOrder；Then: null（Controller 轉 404）。
+     */
+    @Test
+    void ORDER_004_getOrder_missing_returnsNull() {
+        when(orderRepository.findById("ORD-missing")).thenReturn(Optional.empty());
+
+        assertThat(orderService.getOrder("ORD-missing")).isNull();
+    }
+
+    /**
+     * CASE ORDER_005：列表回空集合。
+     * Given: findAll 空；When: listOrders；Then: 空 list。
+     */
+    @Test
+    void ORDER_005_listOrders_empty_returnsEmptyList() {
+        when(orderRepository.findAll()).thenReturn(List.of());
+
+        assertThat(orderService.listOrders()).isEmpty();
     }
 }

@@ -2,6 +2,7 @@ package com.trading.app.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.trading.app.application.OrderService;
+import com.trading.app.application.RiskRejectedException;
 import com.trading.app.config.GlobalExceptionHandler;
 import com.trading.app.dto.PlaceOrderRequest;
 import com.trading.common.OrderResult;
@@ -52,8 +53,8 @@ class OrderControllerTest {
     }
 
     /**
-     * CASE ORDER_API_001：合法下單回 201 + FILLED。
-     * Given: Service stub 回成交；When: POST /api/v1/orders；Then: 201、status、orderId。
+     * CASE ORDER_API_001 / ORDER-001：合法下單回 201 + FILLED。
+     * Given: Service stub 回成交（對齊 fixture ORDER-001-SUCCESS）；When: POST /api/v1/orders；Then: 201、status、orderId。
      * 【技巧驗證】薄 Controller 委派與 ResponseEntity CREATED。
      */
     @Test
@@ -71,8 +72,8 @@ class OrderControllerTest {
     }
 
     /**
-     * CASE ORDER_API_002：驗證失敗回 400 VALIDATION_FAILED。
-     * Given: symbol 空、quantity 0；When: POST；Then: 400 + errorCode。
+     * CASE ORDER_API_002 / ORDER-003：驗證失敗回 400 VALIDATION_FAILED。
+     * Given: symbol 空（對齊 fixture ORDER-003-VALIDATION）；When: POST；Then: 400 + errorCode。
      * 【技巧驗證】@Valid + GlobalExceptionHandler。
      */
     @Test
@@ -86,5 +87,23 @@ class OrderControllerTest {
                         .content(objectMapper.writeValueAsString(invalid)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode").value("VALIDATION_FAILED"));
+    }
+
+    /**
+     * CASE ORDER_API_003 / ORDER-002：風控拒絕回 422 RISK_REJECTED。
+     * Given: Service 拋 RiskRejectedException R002；When: POST；Then: 422 + ruleCode。
+     * 【技巧驗證】GlobalExceptionHandler 業務拒絕契約；與整合 ORDER-002 同一 Acceptance。
+     */
+    @Test
+    void ORDER_API_003_riskRejected_returns422() throws Exception {
+        when(orderService.placeOrder(any()))
+                .thenThrow(new RiskRejectedException("R002", "數量超限"));
+
+        mockMvc.perform(post("/api/v1/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validRequest())))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.errorCode").value("RISK_REJECTED"))
+                .andExpect(jsonPath("$.ruleCode").value("R002"));
     }
 }

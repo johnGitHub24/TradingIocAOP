@@ -1,8 +1,8 @@
 # CodeGraphic image export
 
-Source: docs/codeGraphic.html
-Tool: @mermaid-js/mermaid-cli@11 (dark)
-Script: EngineeringOS/eos-minimal/hooks/export-codeGraphic-images.ps1
+Source: `docs/codeGraphic.html`  
+Tool: `@mermaid-js/mermaid-cli@11`（dark）  
+Script: `..\EngineeringOS\eos-minimal\hooks\export-codeGraphic-images.ps1`
 
 | File | Tab |
 |------|-----|
@@ -13,4 +13,6 @@ Script: EngineeringOS/eos-minimal/hooks/export-codeGraphic-images.ps1
 
 Re-run from project root:
 
-    & "d:\ClaudeCode\EngineeringOS\eos-minimal\hooks\export-codeGraphic-images.ps1" -ProjectRoot .
+```powershell
+& "..\EngineeringOS\eos-minimal\hooks\export-codeGraphic-images.ps1" -ProjectRoot .
+```

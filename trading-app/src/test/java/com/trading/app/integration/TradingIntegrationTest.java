@@ -61,9 +61,9 @@ class TradingIntegrationTest {
     }
 
     /**
-     * CASE ORDER_INT_001：下單成功並觸發 Logging／Performance／Audit。
+     * CASE ORDER-001 / ORDER_INT_001：下單成功並觸發 Logging／Performance／Audit。
      * Given: fixture ORDER-001-SUCCESS；When: POST orders；Then: 201 FILLED，Recorder 有 log／timing／audit，DB=1。
-     * 【技巧驗證】@Around 日誌／計時 + @AfterReturning 稽核。
+     * 【技巧驗證】@Around 日誌／計時 + @AfterReturning 稽核。與單元 ORDER-001 同一 Acceptance。
      */
     @Test
     void ORDER_INT_001_placeOrder_succeedsAndTriggersLoggingTimingAudit() throws Exception {
@@ -87,9 +87,9 @@ class TradingIntegrationTest {
     }
 
     /**
-     * CASE RISK_INT_001：數量超限 422，ExceptionAspect 有紀錄。
+     * CASE ORDER-002 / RISK_INT_001：數量超限 422，ExceptionAspect 有紀錄。
      * Given: fixture ORDER-002-RISK_QTY；When: POST；Then: 422 RISK_REJECTED R002，exceptions 含 RiskRejectedException，DB=0。
-     * 【技巧驗證】@AfterThrowing 觀測 + GlobalExceptionHandler 422。
+     * 【技巧驗證】@AfterThrowing 觀測 + GlobalExceptionHandler 422。與單元 ORDER-002 同一 Acceptance。
      */
     @Test
     void RISK_INT_001_quantityOverLimit_returns422AndExceptionAspectRecords() throws Exception {
@@ -108,9 +108,9 @@ class TradingIntegrationTest {
     }
 
     /**
-     * CASE VALIDATION_INT_001：缺 symbol 回 400。
+     * CASE ORDER-003 / VALIDATION_INT_001：缺 symbol 回 400。
      * Given: fixture ORDER-003-VALIDATION；When: POST；Then: 400 VALIDATION_FAILED。
-     * 【技巧驗證】Bean Validation 入口契約。
+     * 【技巧驗證】Bean Validation 入口契約。與單元 ORDER-003 同一 Acceptance。
      */
     @Test
     void VALIDATION_INT_001_missingSymbol_returns400() throws Exception {

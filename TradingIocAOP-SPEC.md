@@ -1,7 +1,7 @@
 # TradingIocAOP Specification
 
 > **EOS 入口規格（英文摘要）。** 領域細節以 [開發專案規格書.md](開發專案規格書.md) 為準。  
-> Docs standard: EngineeringOS eos-minimal @ 0.1.4 — `knowledge/documentation.md`
+> Docs standard: EngineeringOS eos-minimal @ 0.1.10 — `knowledge/documentation.md`
 
 ## 0. Document map
 
@@ -14,7 +14,7 @@
 | [docs/testing.md](docs/testing.md) | 測試／DoD 摘要 |
 | [docs/資料庫設計.md](docs/資料庫設計.md) | `orders` 表 |
 | [docs/驗證設計.md](docs/驗證設計.md) | DTO／風控錯誤 |
-| [docs/測試與CI.md](docs/測試與CI.md) | Case ID、CI |
+| [docs/testing.md](docs/testing.md) | Case ID、CI |
 | [CLAUDE.md](CLAUDE.md) | AI 薄規則 |
 | [README.md](README.md) | 快速開始 |
 
@@ -42,11 +42,15 @@
 
 ## 4. Test DoD
 
-- [x] `.\scripts\check.ps1`／`.\gradlew.bat checkAll` green
-- [x] 約 21 Case（unit + integration）見 [docs/testing.md](docs/testing.md)
+- [x] `.\scripts\check.ps1`／`.\gradlew.bat checkAll` green（unit + integration）
+- [x] 成對 Case ORDER-001／002／003；公開 Service ≥1 unit；Order API Happy + 錯誤
+- [x] 詳表見 [docs/testing.md](docs/testing.md)
+
+本機 Demo：IntelliJ／Gradle `:trading-app:bootRun`（**勿** Application 綠箭）。
 
 ## 5. Changelog
 
 | Date | Note |
 |------|------|
+| 2026-08-13 | 成對 ORDER-001／002／003；check.ps1／bootRun 對齊 EOS 0.1.10 |
 | 2026-07-10 | EOS SPEC 入口；摘自 開發專案規格書／API／測試與CI |

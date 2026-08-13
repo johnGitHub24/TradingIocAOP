@@ -40,3 +40,7 @@ tasks.register('checkAll') {
     description = 'Runs check on common, mini-ioc, and trading-app'
     dependsOn ':common:check', ':mini-ioc:check', ':trading-app:check'
 }
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

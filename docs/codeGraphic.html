@@ -32,9 +32,11 @@
     <p class="sub">圖為主 · mini-ioc 手刻 · Spring 六大切面 · 下單/快取流程</p>
     <p class="links">
       <a href="../開發專案規格書.html">規格書（權威）</a>
-      <a href="architecture.html">architecture.md</a>
+      <a href="architecture.html">architecture</a>
       <a href="功能流程說明.html">功能流程說明</a>
       <a href="啟動與StartupInfoLogger.html">啟動說明</a>
+      <a href="IntelliJ-IDE-啟動設定.html">IntelliJ bootRun</a>
+      <a href="testing.html">testing</a>
       <a href="swagger.html">API 文件（Swagger）</a>
     </p>
     <nav class="tabs">
@@ -49,7 +51,7 @@
     <section id="panel-start" class="panel active">
       <h2>5 分鐘上手 — IntelliJ / bootRun</h2>
       <ul class="blurb">
-        <li>執行 <code>TradingApplication</code> 或 <code>.\gradlew.bat :trading-app:bootRun</code>。</li>
+        <li>IntelliJ／終端執行 Gradle <code>:trading-app:bootRun</code>（<strong>不要</strong>對 <code>TradingApplication</code> 按綠箭）。</li>
         <li>啟動成功後 Console 會印連結框（<code>StartupInfoLogger</code>）。</li>
         <li>開 Swagger 或同埠 <code>/</code> Demo 下單 → 再看切面報告。</li>
         <li>手刻對照：另開 <code>.\gradlew.bat :mini-ioc:run</code>。</li>

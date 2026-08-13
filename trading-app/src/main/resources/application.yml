@@ -36,6 +36,7 @@ startup:
     auth: false
     h2: true
     api-docs: true
+    probe: true
     home-path: /
     extra-paths:
       - /api/v1/orders

@@ -1,7 +1,7 @@
-﻿# TradingIocAOP — 專案規則（薄）
+# TradingIocAOP — 專案規則（薄）
 
-繼承：EngineeringOS eos-minimal @ 0.1.5  
-公版路徑：`d:\ClaudeCode\EngineeringOS\eos-minimal\`  
+繼承：EngineeringOS eos-minimal @ **0.1.10**  
+公版：`EngineeringOS/eos-minimal/`  
 權威規格：[開發專案規格書.md](開發專案規格書.md)  
 EOS 入口：[TradingIocAOP-SPEC.md](TradingIocAOP-SPEC.md)
 
@@ -10,17 +10,18 @@ EOS 入口：[TradingIocAOP-SPEC.md](TradingIocAOP-SPEC.md)
 - Backend port: 8080（`trading-app`）
 - Framework: Spring Boot 3.2.2 · Java 21 · 多模組 Gradle（common／mini-ioc／trading-app）
 - DB: H2（僅 trading-app）
-- 驗證入口：`.\scripts\check.ps1` → `gradlew checkAll`
+- 驗證入口：`.\scripts\check.ps1` → `gradlew checkAll`（unit + integration）
+- 本機 Demo：IntelliJ／Gradle **`:trading-app:bootRun`**（**勿**對 `*Application` 綠箭頭）
 
 ## 本專案專屬
 
 - 教學雙軌：手刻 IoC／AOP（`mini-ioc`）vs Spring 六大切面（`trading-app`）
-- API：`API規格書.md`；Case：`docs/測試與CI.md`
+- API：`API規格書.md`；Case：`docs/testing.md`
 - 觀測：`GET /api/v1/aspects/report`
 
 ## 註解深度
 - comment_verbosity: **detailed**
-- 權威：`EngineeringOS/eos-minimal/knowledge/comments.md` §0／§3b（eos-minimal @ 0.1.5）
+- 權威：`EngineeringOS/eos-minimal/knowledge/comments.md` §0／§3b（eos-minimal @ 0.1.10）
 - 結構：【職責】【技巧】【概念】；簡單 getter 可併入類別說明
 
 

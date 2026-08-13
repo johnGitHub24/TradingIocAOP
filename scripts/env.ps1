@@ -1,14 +1,21 @@
-# Set JDK 21 for this project.
-# Usage (dot-source so env vars apply to current shell):
-#   . .\scripts\env.ps1
+# TradingIocAOP - portable env (no hardcoded JDK paths)
+# Copy portable-env.ps1 from eos-minimal/hooks when cloning; env.ps1 stays thin.
 
-$jdk21 = "C:\Program Files\Java\jdk-21"
-
-if (-not (Test-Path $jdk21)) {
-    Write-Warning "JDK 21 not found: $jdk21"
+$ErrorActionPreference = 'Stop'
+$here = $PSScriptRoot
+$portable = Join-Path $here 'portable-env.ps1'
+if (-not (Test-Path $portable)) {
+    $walk = Split-Path $here -Parent
+    for ($i = 0; $i -lt 6; $i++) {
+        $eos = Join-Path $walk 'EngineeringOS\eos-minimal\hooks\portable-env.ps1'
+        if (Test-Path $eos) { $portable = $eos; break }
+        $parent = Split-Path $walk -Parent
+        if (-not $parent -or $parent -eq $walk) { break }
+        $walk = $parent
+    }
+}
+if (Test-Path $portable) {
+    . $portable
 } else {
-    $env:JAVA_HOME = $jdk21
-    $env:PATH = "$env:JAVA_HOME\bin;$env:PATH"
-    Write-Output "JAVA_HOME = $env:JAVA_HOME"
-    java -version
+    Write-Host 'WARN: portable-env.ps1 not found — OS JAVA_HOME / PATH will be used as-is' -ForegroundColor Yellow
 }

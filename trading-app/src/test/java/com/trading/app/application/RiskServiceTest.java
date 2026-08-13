@@ -35,8 +35,9 @@ class RiskServiceTest {
     }
 
     /**
-     * CASE RISK_002：數量超限拋 R002。
-     * Given: qty=5000；When: check；Then: RiskRejectedException.ruleCode=R002。
+     * CASE RISK_002 / ORDER-002：數量超限拋 R002。
+     * Given: qty=5000（對齊 fixture ORDER-002-RISK_QTY）；When: check；Then: RiskRejectedException.ruleCode=R002。
+     * 【技巧驗證】與整合 ORDER-002 同一風控契約。
      */
     @Test
     void RISK_002_quantityOverLimit_throwsR002() {

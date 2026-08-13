@@ -1,16 +1,23 @@
-.gradle/
-build/
-!gradle/wrapper/gradle-wrapper.jar
-*.log
-.idea/
-*.iml
-.vscode/
-bin/
-out/
+# All hidden files/dirs - local only (exception: this file)
+.*
+!.gitignore
 
-# eos-minimal onboard
-node_modules/
+!.github/
+!.github/**
+build/
+out/
+bin/
+*.iml
+*.log
 hs_err_pid*.log
-bash.exe.stackdump
-.env
 replay_pid*.log
+bash.exe.stackdump
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+*.zip
+**/__pycache__/
+*.pyc
+Thumbs.db
+
