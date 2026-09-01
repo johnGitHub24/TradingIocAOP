@@ -1,4 +1,4 @@
-# 一鍵建置 + 測試三模組（單元 + 整合）。
+﻿# 一鍵建置 + 測試三模組（單元 + 整合）。
 # 用法：.\scripts\check.ps1
 
 . "$PSScriptRoot\env.ps1"
