@@ -4,8 +4,8 @@ import java.time.Instant;
 
 /**
  * 【職責】統一錯誤回應格式（errorCode／message／ruleCode／timestamp）。
- * 【技巧】POJO；建構時自動填 {@link Instant#now()}。
- * 【概念】所有例外路徑回同一形狀，前端與測試可用固定 jsonPath 斷言。
+ * <p>【技巧】POJO；建構時自動填 {@link Instant#now()}。
+ * <p>【概念】所有例外路徑回同一形狀，前端與測試可用固定 jsonPath 斷言。
  */
 public class ErrorResponse {
 
@@ -19,8 +19,8 @@ public class ErrorResponse {
 
     /**
      * 【職責】建立錯誤回應並戳記時間。
-     * 【技巧】三參數建構子；timestamp 預設 now。
-     * 【概念】ruleCode 可為 null（驗證失敗等無規則碼情境）。
+     * <p>【技巧】三參數建構子；timestamp 預設 now。
+     * <p>【概念】ruleCode 可為 null（驗證失敗等無規則碼情境）。
      */
     public ErrorResponse(String errorCode, String message, String ruleCode) {
         this.errorCode = errorCode;

@@ -19,8 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 【職責】驗證手刻 AOP：JDK 動態代理 + 攔截器鏈的進出日誌、計時與執行順序。
- * 【技巧】MiniApplicationContext 掛攔截器後以介面取 bean；ProxyFactory 直接測鏈順序。
- * 【概念】保護「橫切真的包到業務方法」與「先登記者為外層」——對照 Spring {@code @Order}。
+ * <p>【技巧】MiniApplicationContext 掛攔截器後以介面取 bean；ProxyFactory 直接測鏈順序。
+ * <p>【概念】保護「橫切真的包到業務方法」與「先登記者為外層」——對照 Spring {@code @Order}。
  */
 @Tag("unit")
 class ProxyInterceptorTest {
@@ -36,8 +36,8 @@ class ProxyInterceptorTest {
 
     /**
      * CASE AOP_001：LoggingInterceptor 記錄進出。
-     * Given: 容器掛 LoggingInterceptor；When: place 合法單；Then: logs 含進入／離開 place。
-     * 【技巧驗證】Around 風格攔截器在 proceed 前後寫入。
+     * <br>Given: 容器掛 LoggingInterceptor；When: place 合法單；Then: logs 含進入／離開 place。
+     * <p>【技巧驗證】Around 風格攔截器在 proceed 前後寫入。
      */
     @Test
     void AOP_001_loggingInterceptor_recordsEnterAndExit() {
@@ -53,8 +53,8 @@ class ProxyInterceptorTest {
 
     /**
      * CASE AOP_002：TimingInterceptor 記錄耗時。
-     * Given: 掛 TimingInterceptor；When: place；Then: timings 含 place 且 ≥ 0。
-     * 【技巧驗證】finally 計時（成功路徑也寫入）。
+     * <br>Given: 掛 TimingInterceptor；When: place；Then: timings 含 place 且 ≥ 0。
+     * <p>【技巧驗證】finally 計時（成功路徑也寫入）。
      */
     @Test
     void AOP_002_timingInterceptor_recordsElapsed() {
@@ -69,8 +69,8 @@ class ProxyInterceptorTest {
 
     /**
      * CASE AOP_003：攔截器鏈依登記順序洋蔥式執行。
-     * Given: outer→inner 兩攔截器；When: quote；Then: outer-before, inner-before, inner-after, outer-after。
-     * 【技巧驗證】InterceptorChain 索引推進順序。
+     * <br>Given: outer→inner 兩攔截器；When: quote；Then: outer-before, inner-before, inner-after, outer-after。
+     * <p>【技巧驗證】InterceptorChain 索引推進順序。
      */
     @Test
     void AOP_003_interceptorChain_executesInRegisteredOrder() {

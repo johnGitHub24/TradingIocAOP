@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 
 /**
  * 【職責】切面 6／6：下單成功回傳後寫入稽核軌跡。
- * 【技巧】{@code @AfterReturning(pointcut=…, returning="result")}；只綁 {@code placeOrder}；{@code @Order(60)}。
- * 【概念】稽核是合規橫切關注點——「成交後留痕」不應塞進業務方法尾端。{@code @AfterReturning} 只在正常返回觸發（例外路徑不寫成功稽核）；與 {@code @After}/{@code @AfterThrowing} 互補。
- * 【邊界】不修改回傳值；風控拒絕等例外路徑不會進此方法。
+ * <p>【技巧】{@code @AfterReturning(pointcut=…, returning="result")}；只綁 {@code placeOrder}；{@code @Order(60)}。
+ * <p>【概念】稽核是合規橫切關注點——「成交後留痕」不應塞進業務方法尾端。{@code @AfterReturning} 只在正常返回觸發（例外路徑不寫成功稽核）；與 {@code @After}/{@code @AfterThrowing} 互補。
+ * <p>【邊界】不修改回傳值；風控拒絕等例外路徑不會進此方法。
  */
 @Aspect
 @Component
@@ -25,8 +25,8 @@ public class AuditAspect {
 
     /**
      * 【職責】注入共用觀測器。
-     * 【技巧】建構子注入。
-     * 【概念】稽核列可被報表 API 與整合測試讀取。
+     * <p>【技巧】建構子注入。
+     * <p>【概念】稽核列可被報表 API 與整合測試讀取。
      */
     public AuditAspect(AspectRecorder recorder) {
         this.recorder = recorder;
@@ -34,8 +34,8 @@ public class AuditAspect {
 
     /**
      * 【職責】將成交摘要寫入稽核記錄。
-     * 【技巧】{@code returning} 綁定回傳的 {@link OrderResult}；無需 JoinPoint.proceed。
-     * 【概念】AfterReturning＝「成功後通知」。比在 Service 末尾手寫 audit 更不易漏、也更易統一格式。
+     * <p>【技巧】{@code returning} 綁定回傳的 {@link OrderResult}；無需 JoinPoint.proceed。
+     * <p>【概念】AfterReturning＝「成功後通知」。比在 Service 末尾手寫 audit 更不易漏、也更易統一格式。
      * @param result 下單成功回傳值
      */
     @AfterReturning(

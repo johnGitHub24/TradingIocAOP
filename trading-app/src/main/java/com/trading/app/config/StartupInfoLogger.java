@@ -18,9 +18,9 @@ import java.util.List;
 
 /**
  * 【職責】應用就緒後於 Console 印出常用 URL（health／Swagger／H2／切面報告／靜態 Demo），方便 IntelliJ 本機啟動。
- * 【技巧】聽 {@link ApplicationReadyEvent}；開關全來自 {@code startup.info.*}；以 UTF-8 {@link PrintStream} 寫出；需 JVM {@code -Dstdout.encoding=UTF-8} 與 IDE Console=UTF-8（見 EOS knowledge）。
- * 【概念】開發便利輸出，不是業務邏輯；對照 mini-ioc 的主控台 {@code [LOG]/[TIMING]}——兩邊都在「啟動後告訴你怎麼觀察」，Spring 版多印 HTTP 入口。
- * 【邊界】不負責啟動 mini-ioc、不驗證 URL 是否可連。
+ * <p>【技巧】聽 {@link ApplicationReadyEvent}；開關全來自 {@code startup.info.*}；以 UTF-8 {@link PrintStream} 寫出；需 JVM {@code -Dstdout.encoding=UTF-8} 與 IDE Console=UTF-8（見 EOS knowledge）。
+ * <p>【概念】開發便利輸出，不是業務邏輯；對照 mini-ioc 的主控台 {@code [LOG]/[TIMING]}——兩邊都在「啟動後告訴你怎麼觀察」，Spring 版多印 HTTP 入口。
+ * <p>【邊界】不負責啟動 mini-ioc、不驗證 URL 是否可連。
  */
 @Component
 public class StartupInfoLogger implements ApplicationListener<ApplicationReadyEvent> {
@@ -104,7 +104,7 @@ public class StartupInfoLogger implements ApplicationListener<ApplicationReadyEv
 
     /**
      * 【職責】以 UTF-8 寫出 banner（與 JVM stdout.encoding=UTF-8、IDE Console UTF-8 對齊）。
-     * 【技巧】勿依賴系統預設 MS950；端到端 UTF-8 才能 run-anywhere。
+     * <p>【技巧】勿依賴系統預設 MS950；端到端 UTF-8 才能 run-anywhere。
      */
 
     private static String mark(boolean probe, String url) {

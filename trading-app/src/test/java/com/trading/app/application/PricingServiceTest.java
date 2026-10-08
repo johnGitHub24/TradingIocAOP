@@ -10,16 +10,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 【職責】驗證 PricingService 假報價計算與計數器（不含 CacheAspect）。
- * 【技巧】直接 {@code new}，不啟動 Spring／AOP。
- * 【概念】單元測「本體每次都會算」；快取命中留給 CACHE_INT_001。
+ * <p>【技巧】直接 {@code new}，不啟動 Spring／AOP。
+ * <p>【概念】單元測「本體每次都會算」；快取命中留給 CACHE_INT_001。
  */
 @Tag("unit")
 class PricingServiceTest {
 
     /**
      * CASE PRICE_001：同 symbol 兩次呼叫皆遞增 computeCount，且 bid／ask 穩定。
-     * Given: 新 PricingService；When: getQuote("AAPL") 兩次；Then: count=2、mid 非空、兩次報價相同。
-     * 【技巧驗證】hash 推導可重現；切面未織入時不會短路。
+     * <br>Given: 新 PricingService；When: getQuote("AAPL") 兩次；Then: count=2、mid 非空、兩次報價相同。
+     * <p>【技巧驗證】hash 推導可重現；切面未織入時不會短路。
      */
     @Test
     void PRICE_001_getQuote_incrementsComputeCountAndIsStable() {

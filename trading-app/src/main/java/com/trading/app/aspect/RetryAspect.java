@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 
 /**
  * 【職責】切面 4／6：標註 {@link Retryable} 的方法失敗時自動重試。
- * 【技巧】{@code @Around("@annotation(retryable)")} 綁定註解參數；迴圈呼叫 {@code proceed()}；{@code @Order(40)}。
- * 【概念】重試是橫切關注點——業務方法只寫「送通知」，不寫 for-retry。註解驅動切點＝「誰需要重試誰貼標」，比 execution 全包更精準。
- * 【邊界】耗盡後拋最後一次例外；不區分例外類型（教學簡化）。
+ * <p>【技巧】{@code @Around("@annotation(retryable)")} 綁定註解參數；迴圈呼叫 {@code proceed()}；{@code @Order(40)}。
+ * <p>【概念】重試是橫切關注點——業務方法只寫「送通知」，不寫 for-retry。註解驅動切點＝「誰需要重試誰貼標」，比 execution 全包更精準。
+ * <p>【邊界】耗盡後拋最後一次例外；不區分例外類型（教學簡化）。
  */
 @Aspect
 @Component
@@ -26,8 +26,8 @@ public class RetryAspect {
 
     /**
      * 【職責】注入共用觀測器。
-     * 【技巧】建構子注入。
-     * 【概念】記錄 attempts 供整合測試驗證「真的重試過」。
+     * <p>【技巧】建構子注入。
+     * <p>【概念】記錄 attempts 供整合測試驗證「真的重試過」。
      */
     public RetryAspect(AspectRecorder recorder) {
         this.recorder = recorder;
@@ -35,8 +35,8 @@ public class RetryAspect {
 
     /**
      * 【職責】依 {@link Retryable#maxAttempts()} 重試，成功或耗盡時寫入 Recorder。
-     * 【技巧】註解綁定參數 {@code Retryable retryable}；每次失敗再 proceed。
-     * 【概念】Around 才能「決定要不要再呼叫目標」；Before／After 做不到重試迴圈。
+     * <p>【技巧】註解綁定參數 {@code Retryable retryable}；每次失敗再 proceed。
+     * <p>【概念】Around 才能「決定要不要再呼叫目標」；Before／After 做不到重試迴圈。
      */
     @Around("@annotation(retryable)")
     public Object retry(ProceedingJoinPoint joinPoint, Retryable retryable) throws Throwable {

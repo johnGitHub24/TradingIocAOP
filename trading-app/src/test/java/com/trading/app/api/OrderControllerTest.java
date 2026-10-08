@@ -27,8 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * 【職責】驗證 OrderController HTTP 契約（201／400）與驗證錯誤格式。
- * 【技巧】{@code @WebMvcTest} 只載 Web slice；Service MockBean；Import GlobalExceptionHandler。
- * 【概念】Web 層單測不啟動完整 AOP／JPA——狀態碼與 JSON 形狀在此保護。
+ * <p>【技巧】{@code @WebMvcTest} 只載 Web slice；Service MockBean；Import GlobalExceptionHandler。
+ * <p>【概念】Web 層單測不啟動完整 AOP／JPA——狀態碼與 JSON 形狀在此保護。
  */
 @Tag("unit")
 @WebMvcTest(controllers = OrderController.class)
@@ -54,8 +54,8 @@ class OrderControllerTest {
 
     /**
      * CASE ORDER_API_001 / ORDER-001：合法下單回 201 + FILLED。
-     * Given: Service stub 回成交（對齊 fixture ORDER-001-SUCCESS）；When: POST /api/v1/orders；Then: 201、status、orderId。
-     * 【技巧驗證】薄 Controller 委派與 ResponseEntity CREATED。
+     * <br>Given: Service stub 回成交（對齊 fixture ORDER-001-SUCCESS）；When: POST /api/v1/orders；Then: 201、status、orderId。
+     * <p>【技巧驗證】薄 Controller 委派與 ResponseEntity CREATED。
      */
     @Test
     void ORDER_API_001_place_returns201() throws Exception {
@@ -73,8 +73,8 @@ class OrderControllerTest {
 
     /**
      * CASE ORDER_API_002 / ORDER-003：驗證失敗回 400 VALIDATION_FAILED。
-     * Given: symbol 空（對齊 fixture ORDER-003-VALIDATION）；When: POST；Then: 400 + errorCode。
-     * 【技巧驗證】@Valid + GlobalExceptionHandler。
+     * <br>Given: symbol 空（對齊 fixture ORDER-003-VALIDATION）；When: POST；Then: 400 + errorCode。
+     * <p>【技巧驗證】@Valid + GlobalExceptionHandler。
      */
     @Test
     void ORDER_API_002_invalidRequest_returns400() throws Exception {
@@ -91,8 +91,8 @@ class OrderControllerTest {
 
     /**
      * CASE ORDER_API_003 / ORDER-002：風控拒絕回 422 RISK_REJECTED。
-     * Given: Service 拋 RiskRejectedException R002；When: POST；Then: 422 + ruleCode。
-     * 【技巧驗證】GlobalExceptionHandler 業務拒絕契約；與整合 ORDER-002 同一 Acceptance。
+     * <br>Given: Service 拋 RiskRejectedException R002；When: POST；Then: 422 + ruleCode。
+     * <p>【技巧驗證】GlobalExceptionHandler 業務拒絕契約；與整合 ORDER-002 同一 Acceptance。
      */
     @Test
     void ORDER_API_003_riskRejected_returns422() throws Exception {

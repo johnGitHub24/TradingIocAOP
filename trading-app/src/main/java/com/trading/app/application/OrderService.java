@@ -15,9 +15,9 @@ import java.util.UUID;
 
 /**
  * 【職責】下單編排：風控 → 報價 → 落庫 → 通知。
- * 【技巧】{@code @Service} + 建構子注入四個協作者；{@code @Transactional} 包寫入。
- * 【概念】本類是 DI 主示範點——完全不 {@code new} 相依。日誌／計時／稽核／重試／快取由六大切面橫切掛上，方法只留業務編排。對照 mini-ioc {@code SimpleOrderPlacer}。
- * 【邊界】不處理 HTTP；不實作切面邏輯。
+ * <p>【技巧】{@code @Service} + 建構子注入四個協作者；{@code @Transactional} 包寫入。
+ * <p>【概念】本類是 DI 主示範點——完全不 {@code new} 相依。日誌／計時／稽核／重試／快取由六大切面橫切掛上，方法只留業務編排。對照 mini-ioc {@code SimpleOrderPlacer}。
+ * <p>【邊界】不處理 HTTP；不實作切面邏輯。
  */
 @Service
 public class OrderService {
@@ -29,8 +29,8 @@ public class OrderService {
 
     /**
      * 【職責】接收 Spring 注入的風控、報價、通知與 Repository。
-     * 【技巧】建構子注入（推薦於 field {@code @Autowired}）。
-     * 【概念】相依在建構當下就齊備，物件永遠處於可用狀態；測試可用 Mockito 注入假物件。
+     * <p>【技巧】建構子注入（推薦於 field {@code @Autowired}）。
+     * <p>【概念】相依在建構當下就齊備，物件永遠處於可用狀態；測試可用 Mockito 注入假物件。
      */
     public OrderService(RiskService riskService,
                         PricingService pricingService,
@@ -44,8 +44,8 @@ public class OrderService {
 
     /**
      * 【職責】執行下單編排並回傳成交結果。
-     * 【技巧】{@code @Transactional}；通知失敗 catch 後仍回 FILLED（message 註記）。
-     * 【概念】編排順序固定；快取／重試／稽核由切面觸發——讀此方法時應想像「周圍還有代理洋蔥」。
+     * <p>【技巧】{@code @Transactional}；通知失敗 catch 後仍回 FILLED（message 註記）。
+     * <p>【概念】編排順序固定；快取／重試／稽核由切面觸發——讀此方法時應想像「周圍還有代理洋蔥」。
      * @param request 下單請求
      * @return 成交結果（通知最終失敗時仍可能為 FILLED）
      */
@@ -76,8 +76,8 @@ public class OrderService {
 
     /**
      * 【職責】依 orderId 查單。
-     * 【技巧】{@code @Transactional(readOnly = true)}；Optional map。
-     * 【概念】讀寫分離標註有助於交易管理器優化；不存在回 null 由 Controller 轉 404。
+     * <p>【技巧】{@code @Transactional(readOnly = true)}；Optional map。
+     * <p>【概念】讀寫分離標註有助於交易管理器優化；不存在回 null 由 Controller 轉 404。
      * @return 結果；不存在為 null
      */
     @Transactional(readOnly = true)
@@ -87,8 +87,8 @@ public class OrderService {
 
     /**
      * 【職責】列出全部訂單。
-     * 【技巧】readOnly 交易 + Stream map。
-     * 【概念】教學用全表列出；正式系統應分頁。
+     * <p>【技巧】readOnly 交易 + Stream map。
+     * <p>【概念】教學用全表列出；正式系統應分頁。
      */
     @Transactional(readOnly = true)
     public List<OrderResult> listOrders() {

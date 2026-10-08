@@ -17,16 +17,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 【職責】手刻容器整合：掃描 + DI + AOP 代理 + 下單端到端。
- * 【技巧】scan + 雙攔截器；以介面取 bean 後下兩筆單。
- * 【概念】保護「IoC 與 AOP 接點」整條鏈仍可用——對照 trading-app 的 SpringBootTest。
+ * <p>【技巧】scan + 雙攔截器；以介面取 bean 後下兩筆單。
+ * <p>【概念】保護「IoC 與 AOP 接點」整條鏈仍可用——對照 trading-app 的 SpringBootTest。
  */
 @Tag("integration")
 class MiniIocIntegrationTest {
 
     /**
      * CASE IOC_INT_001：全流程成交與風控拒絕，且攔截器有紀錄。
-     * Given: scan demo + Logging + Timing；When: 合法單與超量單；Then: FILLED／REJECTED，logs 非空，timings 含 place。
-     * 【技巧驗證】代理後業務結果與橫切觀測同時成立。
+     * <br>Given: scan demo + Logging + Timing；When: 合法單與超量單；Then: FILLED／REJECTED，logs 非空，timings 含 place。
+     * <p>【技巧驗證】代理後業務結果與橫切觀測同時成立。
      */
     @Test
     void IOC_INT_001_fullFlow_scanInjectProxyAndPlaceOrder() {

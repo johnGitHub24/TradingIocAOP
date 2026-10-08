@@ -11,8 +11,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 【職責】驗證 SimpleRiskChecker 數量上下限。
- * 【技巧】純 POJO {@code new}，回傳 boolean（對照 trading-app 拋例外）。
- * 【概念】手刻軌用「過不過」表達拒絕，呼叫端決定組 REJECTED。
+ * <p>【技巧】純 POJO {@code new}，回傳 boolean（對照 trading-app 拋例外）。
+ * <p>【概念】手刻軌用「過不過」表達拒絕，呼叫端決定組 REJECTED。
  */
 @Tag("unit")
 class SimpleRiskCheckerTest {
@@ -21,7 +21,7 @@ class SimpleRiskCheckerTest {
 
     /**
      * CASE MINI_RISK_001：數量在 1～1000 內通過；超量拒絕。
-     * Given: qty=10 與 qty=1001；When: approve；Then: true／false。
+     * <br>Given: qty=10 與 qty=1001；When: approve；Then: true／false。
      */
     @Test
     void MINI_RISK_001_quantityBounds() {

@@ -26,8 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * 【職責】全鏈路驗證：真實 Spring IoC + 六大切面 + H2 下單與橫切觀測。
- * 【技巧】{@code @SpringBootTest} + MockMvc；BeforeEach 清空 DB／快取／Recorder。
- * 【概念】這是「AOP 看得見」的契約測試——每個 CASE 對應至少一個切面技巧。
+ * <p>【技巧】{@code @SpringBootTest} + MockMvc；BeforeEach 清空 DB／快取／Recorder。
+ * <p>【概念】這是「AOP 看得見」的契約測試——每個 CASE 對應至少一個切面技巧。
  */
 @Tag("integration")
 @SpringBootTest
@@ -62,8 +62,8 @@ class TradingIntegrationTest {
 
     /**
      * CASE ORDER-001 / ORDER_INT_001：下單成功並觸發 Logging／Performance／Audit。
-     * Given: fixture ORDER-001-SUCCESS；When: POST orders；Then: 201 FILLED，Recorder 有 log／timing／audit，DB=1。
-     * 【技巧驗證】@Around 日誌／計時 + @AfterReturning 稽核。與單元 ORDER-001 同一 Acceptance。
+     * <br>Given: fixture ORDER-001-SUCCESS；When: POST orders；Then: 201 FILLED，Recorder 有 log／timing／audit，DB=1。
+     * <p>【技巧驗證】@Around 日誌／計時 + @AfterReturning 稽核。與單元 ORDER-001 同一 Acceptance。
      */
     @Test
     void ORDER_INT_001_placeOrder_succeedsAndTriggersLoggingTimingAudit() throws Exception {
@@ -88,8 +88,8 @@ class TradingIntegrationTest {
 
     /**
      * CASE ORDER-002 / RISK_INT_001：數量超限 422，ExceptionAspect 有紀錄。
-     * Given: fixture ORDER-002-RISK_QTY；When: POST；Then: 422 RISK_REJECTED R002，exceptions 含 RiskRejectedException，DB=0。
-     * 【技巧驗證】@AfterThrowing 觀測 + GlobalExceptionHandler 422。與單元 ORDER-002 同一 Acceptance。
+     * <br>Given: fixture ORDER-002-RISK_QTY；When: POST；Then: 422 RISK_REJECTED R002，exceptions 含 RiskRejectedException，DB=0。
+     * <p>【技巧驗證】@AfterThrowing 觀測 + GlobalExceptionHandler 422。與單元 ORDER-002 同一 Acceptance。
      */
     @Test
     void RISK_INT_001_quantityOverLimit_returns422AndExceptionAspectRecords() throws Exception {
@@ -109,8 +109,8 @@ class TradingIntegrationTest {
 
     /**
      * CASE ORDER-003 / VALIDATION_INT_001：缺 symbol 回 400。
-     * Given: fixture ORDER-003-VALIDATION；When: POST；Then: 400 VALIDATION_FAILED。
-     * 【技巧驗證】Bean Validation 入口契約。與單元 ORDER-003 同一 Acceptance。
+     * <br>Given: fixture ORDER-003-VALIDATION；When: POST；Then: 400 VALIDATION_FAILED。
+     * <p>【技巧驗證】Bean Validation 入口契約。與單元 ORDER-003 同一 Acceptance。
      */
     @Test
     void VALIDATION_INT_001_missingSymbol_returns400() throws Exception {
@@ -125,8 +125,8 @@ class TradingIntegrationTest {
 
     /**
      * CASE CACHE_INT_001：重複報價命中 CacheAspect。
-     * Given: 連續 GET 同一 symbol；When: 兩次 pricing；Then: cacheHits≥1 且 computeCount=1。
-     * 【技巧驗證】@Around + @Cacheable 短路（不 proceed）。
+     * <br>Given: 連續 GET 同一 symbol；When: 兩次 pricing；Then: cacheHits≥1 且 computeCount=1。
+     * <p>【技巧驗證】@Around + @Cacheable 短路（不 proceed）。
      */
     @Test
     void CACHE_INT_001_repeatedQuote_hitsCacheAspect() throws Exception {
@@ -141,8 +141,8 @@ class TradingIntegrationTest {
 
     /**
      * CASE RETRY_INT_001：通知重試後訂單仍 FILLED。
-     * Given: failuresBeforeSuccess=1；When: 下單；Then: 201 FILLED，retryAttempts 中 notifyFilled ≥2。
-     * 【技巧驗證】@Retryable + @Around 重試迴圈。
+     * <br>Given: failuresBeforeSuccess=1；When: 下單；Then: 201 FILLED，retryAttempts 中 notifyFilled ≥2。
+     * <p>【技巧驗證】@Retryable + @Around 重試迴圈。
      */
     @Test
     void RETRY_INT_001_notificationRetried_orderStillFilled() throws Exception {

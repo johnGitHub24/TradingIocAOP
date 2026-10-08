@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 
 /**
  * 【職責】下單結果的純資料模型（orderId、成交價、狀態、訊息）。
- * 【技巧】POJO；與 {@link OrderRequest} 對稱，作為 Service／Controller 的回傳契約。
- * 【概念】把「請求」與「結果」拆成兩個型別，API 邊界清楚；同樣零框架相依，跨模組可共用。
- * 【邊界】不負責持久化；trading-app 另有 {@code OrderEntity} 對應資料表。
+ * <p>【技巧】POJO；與 {@link OrderRequest} 對稱，作為 Service／Controller 的回傳契約。
+ * <p>【概念】把「請求」與「結果」拆成兩個型別，API 邊界清楚；同樣零框架相依，跨模組可共用。
+ * <p>【邊界】不負責持久化；trading-app 另有 {@code OrderEntity} 對應資料表。
  */
 public class OrderResult {
 

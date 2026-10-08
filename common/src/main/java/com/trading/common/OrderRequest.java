@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 
 /**
  * 【職責】下單請求的純資料模型，在模組邊界傳遞「要下什麼單」。
- * 【技巧】POJO（無框架註解）；金額用 {@link BigDecimal} 避免浮點誤差。
- * 【概念】零框架相依才能同時被手刻 mini-ioc 與 Spring trading-app 引用——共用 domain 是多模組教學的關鍵。
- * 【邊界】不含 Bean Validation；HTTP 入口驗證在 trading-app 的 DTO。
+ * <p>【技巧】POJO（無框架註解）；金額用 {@link BigDecimal} 避免浮點誤差。
+ * <p>【概念】零框架相依才能同時被手刻 mini-ioc 與 Spring trading-app 引用——共用 domain 是多模組教學的關鍵。
+ * <p>【邊界】不含 Bean Validation；HTTP 入口驗證在 trading-app 的 DTO。
  */
 public class OrderRequest {
 

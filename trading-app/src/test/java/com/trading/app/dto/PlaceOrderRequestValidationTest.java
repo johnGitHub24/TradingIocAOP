@@ -18,8 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 【職責】單元測試 PlaceOrderRequest 的 Bean Validation 約束。
- * 【技巧】純 Validator（無 Spring）；載入與整合層相同的 fixture。
- * 【概念】入口格式錯誤在進 MockMvc 前就能鎖住；ORDER-003 與整合層同一 Acceptance。
+ * <p>【技巧】純 Validator（無 Spring）；載入與整合層相同的 fixture。
+ * <p>【概念】入口格式錯誤在進 MockMvc 前就能鎖住；ORDER-003 與整合層同一 Acceptance。
  */
 @Tag("unit")
 class PlaceOrderRequestValidationTest {
@@ -40,8 +40,8 @@ class PlaceOrderRequestValidationTest {
 
     /**
      * CASE ORDER-001：合法 fixture 無違規。
-     * Given: ORDER-001-SUCCESS；When: validate；Then: violations 為空。
-     * 【技巧驗證】與整合 ORDER-001 同一合法輸入。
+     * <br>Given: ORDER-001-SUCCESS；When: validate；Then: violations 為空。
+     * <p>【技巧驗證】與整合 ORDER-001 同一合法輸入。
      */
     @Test
     void ORDER_001_validFixture_hasNoViolations() {
@@ -58,8 +58,8 @@ class PlaceOrderRequestValidationTest {
 
     /**
      * CASE ORDER-003：缺 symbol 有違規。
-     * Given: fixture ORDER-003-VALIDATION（無 symbol）；When: validate；Then: 違規欄位含 symbol。
-     * 【技巧驗證】{@code @NotBlank}；與整合 ORDER-003 同一 Acceptance。
+     * <br>Given: fixture ORDER-003-VALIDATION（無 symbol）；When: validate；Then: 違規欄位含 symbol。
+     * <p>【技巧驗證】{@code @NotBlank}；與整合 ORDER-003 同一 Acceptance。
      */
     @Test
     void ORDER_003_missingSymbol_hasViolation() {

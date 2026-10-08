@@ -13,8 +13,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * 【職責】驗證 NotificationService 失敗／成功門檻（不含 RetryAspect）。
- * 【技巧】直接 {@code new}；{@code setFailuresBeforeSuccess} 控制第幾次才過。
- * 【概念】單元測「本體第 N 次會丟」；重試迴圈留給 RETRY_INT_001。
+ * <p>【技巧】直接 {@code new}；{@code setFailuresBeforeSuccess} 控制第幾次才過。
+ * <p>【概念】單元測「本體第 N 次會丟」；重試迴圈留給 RETRY_INT_001。
  */
 @Tag("unit")
 class NotificationServiceTest {
@@ -26,8 +26,8 @@ class NotificationServiceTest {
 
     /**
      * CASE NOTIFY_002：預設失敗一次後第二次成功。
-     * Given: failuresBeforeSuccess=1；When: 同 client 呼叫兩次；Then: 第一次拋 NotificationException，第二次不拋。
-     * 【技巧驗證】attempt 計次與門檻。
+     * <br>Given: failuresBeforeSuccess=1；When: 同 client 呼叫兩次；Then: 第一次拋 NotificationException，第二次不拋。
+     * <p>【技巧驗證】attempt 計次與門檻。
      */
     @Test
     void NOTIFY_002_failsOnceThenSucceeds() {

@@ -11,15 +11,15 @@ import java.math.BigDecimal;
 
 /**
  * 【職責】手刻容器端到端示範：掃描 → 掛攔截器 → 取代理 bean → 下單。
- * 【技巧】{@link MiniApplicationContext#scan}／{@code addInterceptor}／{@code getBean(介面)}；執行 {@code ./gradlew :mini-ioc:run}。
- * 【概念】把 IoC（誰建立誰）與 AOP（誰包誰）串成一條可見流程；對照之後啟動 trading-app 看 Spring 做同一件事的工業級版本。
+ * <p>【技巧】{@link MiniApplicationContext#scan}／{@code addInterceptor}／{@code getBean(介面)}；執行 {@code ./gradlew :mini-ioc:run}。
+ * <p>【概念】把 IoC（誰建立誰）與 AOP（誰包誰）串成一條可見流程；對照之後啟動 trading-app 看 Spring 做同一件事的工業級版本。
  */
 public class MiniIocDemo {
 
     /**
      * 【職責】跑兩種情境（成交／風控拒絕）並印出結果與攔截器輸出。
-     * 【技巧】以介面型別取 bean，確保拿到 JDK 代理。
-     * 【概念】若改用實作類 {@code getBean(SimpleOrderPlacer.class)}，在有代理時可能型別不符——凸顯「面向介面」的必要性。
+     * <p>【技巧】以介面型別取 bean，確保拿到 JDK 代理。
+     * <p>【概念】若改用實作類 {@code getBean(SimpleOrderPlacer.class)}，在有代理時可能型別不符——凸顯「面向介面」的必要性。
      */
     public static void main(String[] args) {
         MiniApplicationContext context = new MiniApplicationContext()

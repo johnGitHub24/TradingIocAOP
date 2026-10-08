@@ -13,8 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 【職責】驗證 SimpleOrderPlacer 編排：風控過則 FILLED、不過則 REJECTED。
- * 【技巧】直接 {@code new} 真實協作者，不經容器／代理。
- * 【概念】單元測業務編排；IoC 解析留給 IOC_001，代理留給 AOP／IOC_INT_001。
+ * <p>【技巧】直接 {@code new} 真實協作者，不經容器／代理。
+ * <p>【概念】單元測業務編排；IoC 解析留給 IOC_001，代理留給 AOP／IOC_INT_001。
  */
 @Tag("unit")
 class SimpleOrderPlacerTest {
@@ -24,7 +24,7 @@ class SimpleOrderPlacerTest {
 
     /**
      * CASE MINI_ORDER_001：合法數量成交並帶中間價。
-     * Given: qty=10；When: place；Then: FILLED 且 executedPrice 非空。
+     * <br>Given: qty=10；When: place；Then: FILLED 且 executedPrice 非空。
      */
     @Test
     void MINI_ORDER_001_approved_returnsFilled() {
@@ -37,7 +37,7 @@ class SimpleOrderPlacerTest {
 
     /**
      * CASE MINI_ORDER_002：超量風控拒絕、無成交價。
-     * Given: qty=9999；When: place；Then: REJECTED、executedPrice 為 null。
+     * <br>Given: qty=9999；When: place；Then: REJECTED、executedPrice 為 null。
      */
     @Test
     void MINI_ORDER_002_rejected_returnsRejectedWithoutPrice() {
